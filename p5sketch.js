@@ -1,10 +1,11 @@
 let bgColor = '#FFBA53';
 let flowerColor = '#FF6152';
 let overlayColor = '#FFFFFF';
+let showInnerCircle
 const PRESETS = [
   { name: 'fuchsia and yellow', bg: '#FFBA53', flower: '#FF6152', overlay: '#FFFFFF'},
   
-  { name: 'blue and mint', bg: '#76E5BD', flower: '#00BEB6', overlay: '#ffffff'},
+  { name: 'blue and mint', bg: '#76E5BD', flower: '#00BEB6', overlay: '#FFFFFF'},
   
   { name: 'pink and yellow', bg: '#FFBA53', flower: '#FF4234', overlay: '#FFFFFF'},
 
@@ -18,35 +19,37 @@ const PRESETS = [
 
   { name: 'yellow and fuchsia', bg: '#FF85FD', flower: '#FF6152', overlay: '#FFFFFF'},
 
-  { name: 'fuchsia and yellow with overlay', bg: '#FFFFFF', flower: '#FF85FD', overlay: '#FFBA53'},
+  { name: 'fuchsia and yellow with overlay', bg: '#FFF4E3', flower: '#FF85FD', overlay: '#FFBA53'},
 
-  { name: 'blue and mint with overlay', bg: '#ffffff', flower: '#00D4F5', overlay: '#76E5BD'},
+  { name: 'blue and mint with overlay', bg: '#FFF4E3', flower: '#00D4F5', overlay: '#76E5BD'},
   
-  { name: 'pink and yellow with overlay', bg: '#ffffff', flower: '#FF5AA1', overlay: '#FFBA53'},
+  { name: 'pink and yellow with overlay', bg: '#FFF4E3', flower: '#FF5AA1', overlay: '#FFBA53'},
 
-  { name: 'pink and fuchsia with overlay', bg: '#ffffff', flower: '#FE3C90', overlay: '#FF85FD'},
+  { name: 'pink and fuchsia with overlay', bg: '#FFF4E3', flower: '#FE3C90', overlay: '#FF85FD'},
 
-  { name: 'fuchsia and blue with overlay', bg: '#ffffff', flower: '#FF85FD', overlay: '#00D4F5'},
+  { name: 'fuchsia and blue with overlay', bg: '#FFF4E3', flower: '#FF85FD', overlay: '#00D4F5'},
 
-  { name: 'blue and yellow with overlay', bg: '#FFFFFF', flower: '#00D4F5', overlay: '#FFBA53'},
+  { name: 'blue and yellow with overlay', bg: '#FFF4E3', flower: '#00D4F5', overlay: '#FFBA53'},
 
-  { name: 'blue and fuchsia with overlay', bg: '#ffffff', flower: '#00D4F5', overlay: '#FF85FD'},
+  { name: 'blue and fuchsia with overlay', bg: '#FFF4E3', flower: '#00D4F5', overlay: '#FF85FD'},
 
-  { name: 'yellow and fuchsia with overlay', bg: '#FFFFFF', flower: '#FFBA53', overlay: '#FF85FD'},
+  { name: 'yellow and fuchsia with overlay', bg: '#FFF4E3', flower: '#FFBA53', overlay: '#FF85FD'},
 
 ];
 let slider;
 
 function setup() {
-  createCanvas(600, 600);
+  let cnv = createCanvas(600, 600);
+  cnv.parent('canvas');
   noStroke();
   noLoop();
 
-  createP("color presets");
+  createP("COLORS").parent('controls-box');
   const swatchRow = createDiv();
   swatchRow.style('display', 'grid');
   swatchRow.style('grid-template-columns', 'repeat(8, 30px)');
   swatchRow.style('gap', '8px');
+  swatchRow.parent('controls-box');
 
     for (const p of PRESETS) {
     // outer circle = background color
@@ -65,7 +68,7 @@ function setup() {
     const incir = createDiv();
     incir.parent(bgsw);
     incir.style('position', 'absolute');
-    incir.style('left', '7px');           // (29 - 15) / 2
+    incir.style('left', '7px');           
     incir.style('top', '7px');
     incir.style('width', '15px');
     incir.style('height', '15px');
@@ -94,30 +97,46 @@ function setup() {
   }
   
   // 0 = circle, 1 = teardrop
-  createP("Teardrop shape")
-  petalsSlider = createSlider(0, 1, 1, 0.01);
+  createP("PETALS SHAPE").parent('controls-box');
+  petalsSlider = createSlider(0, 1, 1, 0);
+  petalsSlider.parent('controls-box');
   petalsSlider.input(() => redraw());   // redraw only when the slider moves
-  createP("Petals scale")
-  petalsScaler = createSlider(145, 190, 1, 0.01);
+
+  createP("PETALS SIZE").parent('controls-box');
+  petalsScaler = createSlider(145, 190, 1, 0);
+  petalsScaler.parent('controls-box');
   petalsScaler.input(() => redraw());   // redraw only when the slider moves
 
-  createP("inner leaves");
+  createP("INNER PETALS").parent('controls-box');
   leafMode = createRadio();
-  leafMode.option('petal', 'petal shape');
-  leafMode.option('circle', 'circle shape');
-  leafMode.option('hide', 'hide inner leaves');
+  leafMode.parent('controls-box');
+  leafMode.option('petal', 'TEARDROP');
+  leafMode.option('circle', 'CIRCLE');
+  leafMode.option('hide', 'HIDE INNER PETALS');
   leafMode.selected('petal');            // default
   leafMode.changed(() => redraw());
 
-    createP("stroke")
+  createP("CENTER CIRCLE").parent('controls-box');
+  showInnerCircle = createCheckbox("", true);
+  showInnerCircle.parent('controls-box');
+  showInnerCircle.changed(() => redraw());
+
+  createP("CENTER CIRCLE SIZE").parent('controls-box');
+  innerCircleSlider = createSlider(170, 270, 200, 0);
+  innerCircleSlider.parent('controls-box');
+  innerCircleSlider.input(() => redraw());
+
+  createP("SHOW STROKE").parent('controls-box');
   showStroke = createCheckbox("", false);
+  showStroke.parent('controls-box');
   showStroke.changed(() => redraw());
 
-  createP("increase stroke weight")
-  flowerWeightSlider = createSlider(25, 50, 25);
+  createP("STROKE WEIGHT").parent('controls-box');
+  flowerWeightSlider = createSlider(25, 50, 25, 0);
+  flowerWeightSlider.parent('controls-box');
   flowerWeightSlider.changed(() => redraw());
 
-  let jpgButton = createButton('export jpg')
+  let jpgButton = createButton('EXPORT JPG').parent('controls-box');
   jpgButton.mousePressed(function() {
     saveCanvas('generative-logo-flower', 'jpg');
   })
@@ -176,6 +195,22 @@ function draw() {
       pop();
     }
   }
+
+  function innerCircle(outline, d = innerCircleSlider.value()) {
+  if (outline) {
+    stroke(flowerColor);
+    strokeWeight(flowerWeightSlider.value());   // same weight as the petals
+  } else {
+    noStroke();
+  }
+  fill(bgColor);
+  circle(0, 0, d);
+}
+
+  if (showInnerCircle.checked()) {
+    innerCircle(outline);
+  }
+  
   // multiply overlay (drawn in screen space, outside the translate/scale)
   resetMatrix();
   blendMode(MULTIPLY);
